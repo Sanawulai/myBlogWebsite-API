@@ -1,6 +1,7 @@
 package com.sanawulai.blogapplication.service.impl;
 
 import com.sanawulai.blogapplication.entity.Post;
+import com.sanawulai.blogapplication.exception.ResourceNotFoundException;
 import com.sanawulai.blogapplication.payload.PostDto;
 import com.sanawulai.blogapplication.repository.PostRepository;
 import com.sanawulai.blogapplication.service.PostService;
@@ -39,6 +40,41 @@ public class PostServiceImpl implements PostService{
         List<Post> posts = postRepository.findAll();
         return posts.stream().map(post ->
                 mapToDTO(post)).collect(Collectors.toList());
+    }
+
+    @Override
+    public PostDto getPostById(long id) {
+        Post post = postRepository.findById(id).orElseThrow(()->
+                new ResourceNotFoundException("Post", "id", id));
+
+        return mapToDTO(post);
+    }
+
+    @Override
+    public PostDto updatePost(PostDto postDto, long id) {
+        //get post by id from the db
+        Post post = postRepository.findById(id).orElseThrow(()->
+                new ResourceNotFoundException("Post", "id", id));
+
+        post.setTitle(postDto.getTitle());
+        post.setDescription(postDto.getDescription());
+        post.setContent(postDto.getContent());
+
+        //save the update into the db
+        Post updatedPost = postRepository.save(post);
+        return mapToDTO(updatedPost);
+    }
+
+    @Override
+    public void deletePostById(long id) {
+        Post post = postRepository.findById(id).orElseThrow(()->
+                new ResourceNotFoundException("Post", "id", id));
+
+        post.setTitle(post.getTitle());
+        post.setDescription(post.getDescription());
+        post.setContent(post.getContent());
+
+        postRepository.delete(post);
     }
 
     //convert entity to dto
