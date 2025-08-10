@@ -1,6 +1,7 @@
 package com.sanawulai.blogapplication.service;
 
 import com.sanawulai.blogapplication.payload.PostDto;
+import com.sanawulai.blogapplication.payload.PostResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,7 +11,7 @@ public interface PostService {
 
     PostDto createPost(PostDto postDto);
 
-    List<PostDto> getAllPosts();
+    PostResponse getAllPosts(int pageNo, int pageSize, String sortBy, String sortDir);
 
     PostDto getPostById(long id);
 

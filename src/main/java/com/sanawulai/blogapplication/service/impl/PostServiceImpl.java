@@ -3,8 +3,13 @@ package com.sanawulai.blogapplication.service.impl;
 import com.sanawulai.blogapplication.entity.Post;
 import com.sanawulai.blogapplication.exception.ResourceNotFoundException;
 import com.sanawulai.blogapplication.payload.PostDto;
+import com.sanawulai.blogapplication.payload.PostResponse;
 import com.sanawulai.blogapplication.repository.PostRepository;
 import com.sanawulai.blogapplication.service.PostService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,11 +40,32 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
-    public List<PostDto> getAllPosts() {
+    public PostResponse getAllPosts(int pageNo, int pageSize, String sortBy, String sortDir) {
 
-        List<Post> posts = postRepository.findAll();
-        return posts.stream().map(post ->
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name())
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        //create pageable instance
+        Pageable pageable = PageRequest.of(pageNo,pageSize, Sort.by(sortBy));
+
+        Page <Post> posts = postRepository.findAll(pageable);
+
+        //get content for page object
+        List<Post> listOfPosts = posts.getContent();
+
+        List <PostDto> content = listOfPosts.stream().map(post ->
                 mapToDTO(post)).collect(Collectors.toList());
+
+        PostResponse postResponse = new PostResponse();
+        postResponse.setContent(content);
+        postResponse.setPageNo(pageNo);
+        postResponse.setPageSize(pageSize);
+        postResponse.setTotalElements(posts.getTotalElements());
+        postResponse.setTotalPages(posts.getTotalPages());
+        postResponse.setLast(posts.isLast());
+
+        return postResponse;
     }
 
     @Override
@@ -80,6 +106,7 @@ public class PostServiceImpl implements PostService{
     //convert entity to dto
     private PostDto mapToDTO(Post post){
         PostDto postDto = new PostDto();
+
         postDto.setId(post.getId());
         postDto.setTitle(post.getTitle());
         postDto.setContent(post.getContent());
