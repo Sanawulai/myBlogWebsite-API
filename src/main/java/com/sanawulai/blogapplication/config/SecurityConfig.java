@@ -47,6 +47,7 @@ public class SecurityConfig {
                .authorizeHttpRequests((authorize)->
                        //authorize.anyRequest().authenticated()
                        authorize.requestMatchers(HttpMethod.GET,"/api/**").permitAll()
+                               .requestMatchers("/api/**").permitAll() //whitelist users
                                        .anyRequest().authenticated()
                ).httpBasic(Customizer.withDefaults());
 
