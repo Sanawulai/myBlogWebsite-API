@@ -1,6 +1,7 @@
 package com.sanawulai.blogapplication.controller;
 
 
+import com.sanawulai.blogapplication.payload.JWTAuthResponse;
 import com.sanawulai.blogapplication.payload.LoginDto;
 import com.sanawulai.blogapplication.payload.RegisterDto;
 import com.sanawulai.blogapplication.service.AuthService;
@@ -24,9 +25,12 @@ public class AuthController {
 
     //build login rest api
     @PostMapping(value = {"/login","/signin"})
-    public ResponseEntity<String> login(@RequestBody LoginDto loginDto){
-        String response = authService.login(loginDto);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<JWTAuthResponse> login(@RequestBody LoginDto loginDto){
+        String token = authService.login(loginDto);
+
+        JWTAuthResponse jwtAuthResponse = new JWTAuthResponse();
+        jwtAuthResponse.setAccessToken(token);
+        return ResponseEntity.ok(jwtAuthResponse);
     }
 
     //build register rest api
