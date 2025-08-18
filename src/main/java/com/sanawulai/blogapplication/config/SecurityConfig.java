@@ -60,6 +60,7 @@ public class SecurityConfig {
                .authorizeHttpRequests((authorize)->
                        //authorize.anyRequest().authenticated()
                        authorize.requestMatchers(HttpMethod.GET,"/api/**").permitAll()
+//                               .requestMatchers(HttpMethod.GET,"/api/categories/**").permitAll()
                                .requestMatchers("/api/**").permitAll() //whitelist users
                                        .anyRequest().authenticated()
                ).exceptionHandling(exception ->

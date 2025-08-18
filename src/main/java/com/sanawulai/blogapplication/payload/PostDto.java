@@ -27,4 +27,6 @@ public class PostDto {
     private String description;
 
     private Set<CommentDto> comments;
+
+    private long categoryId;
 }
