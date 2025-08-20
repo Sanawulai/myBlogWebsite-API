@@ -4,6 +4,7 @@ import com.sanawulai.blogapplication.payload.PostDto;
 import com.sanawulai.blogapplication.payload.PostResponse;
 import com.sanawulai.blogapplication.service.PostService;
 import com.sanawulai.blogapplication.utils.AppConstants;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,10 @@ public class PostController {
         this.postService = postService;
     }
 
+    @SecurityRequirement(
+            name = "Bear Authentication"
+
+    )
     //create blog post
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
@@ -52,6 +57,10 @@ public class PostController {
         return ResponseEntity.ok(postService.getPostById(id));
     }
 
+    @SecurityRequirement(
+            name = "Bear Authentication"
+
+    )
     //update post by id rest id
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
@@ -59,12 +68,23 @@ public class PostController {
         return ResponseEntity.ok(postService.updatePost(postDto, id));
     }
 
+    @SecurityRequirement(
+            name = "Bear Authentication"
+
+    )
     //delete post by id
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePost(@PathVariable(name = "id") long id){
         postService.deletePostById(id);
         return new ResponseEntity<>("Post entity deleted successfully", HttpStatus.OK);
+    }
+
+    //build get posts by category rest api
+    @GetMapping("/category/{id}")
+    public ResponseEntity<List<PostDto>> getPostsByCategory(@PathVariable(name = "id") Long categoryId){
+        List<PostDto> postDtos = postService.getPostsByCategory(categoryId);
+        return ResponseEntity.ok(postDtos);
     }
 
 

@@ -20,5 +20,7 @@ public interface PostService {
     //delete post by id
     void deletePostById(long id);
 
+    List<PostDto> getPostsByCategory(Long categoryId);
+
 
 }
